@@ -1,3 +1,7 @@
+/*
+Methods to handle key press actions
+*/
+
 void keyTyped(){
   if(key == TAB){
     if((cloud1!=null)&&(cloud2!=null)){
@@ -23,42 +27,9 @@ void keyTyped(){
       }
     }
   }
-  if(key == 'm'){
-    getRotationAndTranslation(cloud1PointsList, cloud2PointsList);
-  }
-  if(key == 'o'){
-    transformateCloud(cloud1,R,T);
-  }
-}
-
-//CAMERA CONTROLS
-//dolly() FOR ZOOMING, MOUSEWHEEL?
-//
-
-void cameraControl(){
-
-
-  if(keyPressed){
-    if(key == 'w' || keyCode == UP){
-      
-    }
-    if(key == 's' || keyCode == DOWN){
-      
-    }
-    if(key == 'd' || keyCode == RIGHT){
-      
-    }
-    if(key == 'a' || keyCode == LEFT){
-      
-    }
-    if(key == 'r'){
-      
-    }
-    //TEST ROTATION AND TRANSLATION PARAMS
-    if(key == 'p'){
-      transformateCloud();
-  
-    }
+  if(key == BACKSPACE){
+    currentScreen=0;
+    shouldCameraBeOn();
   }
 
 }

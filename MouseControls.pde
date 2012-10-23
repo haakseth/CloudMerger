@@ -1,39 +1,16 @@
-//What happens when mouse button is pressed
-void mouseControl(){
-  if(mousePressed){
-    if(keyPressed){
-      if(keyCode == SHIFT){
-        if(mouseButton==LEFT){
-          tvX+=(mouseX-pmouseX)*0.5;
-          tvZ+=(mouseY-pmouseY)*0.5;      
-        }
-        if(mouseButton == RIGHT){
-          tvY+=(mouseY-pmouseY)*0.5;  
-        }
-      }
-    }
-    if(!keyPressed){
-      if(mouseButton==LEFT){
-        vZ+=(mouseX-pmouseX)*0.5;
-        vX+=(mouseY-pmouseY)*0.5;      
-      }
-      if(mouseButton == RIGHT){
-        vY+=(mouseX-pmouseX)*0.5; 
-        vYY+=(mouseY-pmouseY)*0.5; 
-      }
-    }
-  }
-}
+/*
+Methods to handle mouse actions
+*/
 
 void mouseClicked(){
   if(currentScreen == 0){
       if(laodcloud1button.over()){
         println("load cloud 1");
-        chooseFile(1);
+        chooseFile1();
       }
       if(laodcloud2button.over()){
         println("load cloud 2");
-        chooseFile(2);
+        chooseFile2();
       }
       if(viewcloud1button.over()){
         if(cloud1!=null){
@@ -61,38 +38,34 @@ void mouseClicked(){
         currentScreen = 3;
         shouldCameraBeOn();
       }
+      if(printFileButton.over()){
+        writeFiles();
+      }
+      if(resetRegistrationButton.over()){
+        resetPointLists();
+      }
     }
-  if(currentScreen==1){
-    println("Clicked point is: " + (unProject(mouseX,mouseY)));
-    if(selectClosestPoint((unProject(mouseX,mouseY)),(vectorCloud1))!=null){
-      cloud1PointsList.add(selectClosestPoint((unProject(mouseX,mouseY)),(vectorCloud1)));
-    }
-    println("number of selected points in cloud 1: "+cloud1PointsList.size());
-    
-  }
-  if(currentScreen==2){
-    println("Clicked point is: " + (unProject(mouseX,mouseY)));
-    if(selectClosestPoint((unProject(mouseX,mouseY)),(vectorCloud2))!=null){
-      cloud2PointsList.add(selectClosestPoint((unProject(mouseX,mouseY)),(vectorCloud2)));
-    }
-      println("number of selected points in cloud 2: "+cloud2PointsList.size());
+    if(keyPressed){
+      if(keyCode == SHIFT){
+        if(currentScreen==1){
+          println("Clicked point is: " + (unProject(mouseX,mouseY)));
+          if(selectClosestPoint((unProject(mouseX,mouseY)),(vectorCloud1))!=null){
+            cloud1PointsList.add(selectClosestPoint((unProject(mouseX,mouseY)),(vectorCloud1)));
+          }
+          println("number of selected points in cloud 1: "+cloud1PointsList.size());
+        }
+        if(currentScreen==2){
+          println("Clicked point is: " + (unProject(mouseX,mouseY)));
+          if(selectClosestPoint((unProject(mouseX,mouseY)),(vectorCloud2))!=null){
+            cloud2PointsList.add(selectClosestPoint((unProject(mouseX,mouseY)),(vectorCloud2)));
+          }
+        println("number of selected points in cloud 2: "+cloud2PointsList.size());
 
-  }
+        }
+      }
+    }  
+
   
-}
-
-//Use the mouse wheel to zoom 
-void setupMouseWheel() {
-  addMouseWheelListener(new java.awt.event.MouseWheelListener() { 
-    public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) { 
-      mouseWheel(evt.getWheelRotation());
-  }}); 
-}
-
-void mouseWheel(int delta) {
-  float de = 0.01;
-//  camera1.zoom(de*delta);
-//  println("zoom " + de*delta);
 }
 
 PVector selectClosestPoint(PVector mouseClick, PVector[] cloud){

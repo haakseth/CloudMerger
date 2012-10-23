@@ -1,3 +1,7 @@
+/*
+The methods for drawing the different screens.
+*/
+
 //Screen that shows when application is launched, user clicks a button to open filechoosers to find clouds.
 void drawOpenScreen(){
   
@@ -10,8 +14,11 @@ void drawOpenScreen(){
   }
   if(transCloud!=null){
     viewBigCloudButton.draw();
+    printFileButton.draw();
   }
-  
+  if(cloud1PointsList.size()!=0 || cloud2PointsList.size()!=0){
+    resetRegistrationButton.draw();
+  }
   
 }
 
@@ -60,12 +67,13 @@ void drawBigCloud(){
   gl2.glDrawArrays(GL.GL_POINTS, 0, f2.capacity()/3);
   gl2.glDisableClientState(GL.GL_VERTEX_ARRAY);
   
-  gl2.glColor4f(0.5f,0.6f,0.6f,0.6f);   
+  gl2.glColor4f(0.8f,0.6f,0.6f,0.6f);   
   gl2.glEnableClientState(GL.GL_VERTEX_ARRAY);
   gl2.glVertexPointer(3, GL.GL_FLOAT, 0, f3); //define an array of vertex data, gets points from FloatBuffer f
   gl2.glDrawArrays(GL.GL_POINTS, 0, f3.capacity()/3);
   gl2.glDisableClientState(GL.GL_VERTEX_ARRAY);
   pgl2.endGL();
+  frame.setTitle("KinectCloud - Merged cloud");
 }
 
 void shouldCameraBeOn(){
@@ -75,13 +83,10 @@ void shouldCameraBeOn(){
   }
   else{
     if(cameraOn == false){
-    //    camera1 = new PeasyCam(this,100);
       camera1 = new PeasyCam(this,00,00,00, 500);
-//      camera1.setRotations(30,180,0);
-      camera1.setWheelScale(0.1);
-      camera1.setMinimumDistance(0);
+      camera1.setWheelScale(1);
+      camera1.setMinimumDistance(10);
       cameraOn = true;
     }
-
   }
 }

@@ -6,89 +6,86 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import peasy.*;
 import javax.swing.*; 
+import java.text.DecimalFormat;
 import Jama.Matrix;
 import Jama.EigenvalueDecomposition;
 
-int currentScreen;
-PeasyCam camera1;
-Button laodcloud1button, laodcloud2button, viewcloud1button, viewcloud2button, transformCloudButton, viewBigCloudButton;
-boolean cameraOn = false;
+/*
+Object declarations:
+*/
+int currentScreen; //this decides which screen is being drawn
+PeasyCam camera1; //Camera object, allows the user to navigate around the cloud using mouse
+Button laodcloud1button, laodcloud2button, viewcloud1button, viewcloud2button, 
+  transformCloudButton, viewBigCloudButton, resetRegistrationButton, printFileButton; 
+boolean cameraOn = false; //camera must be off when displaying menu screen
 
 
-GLU glu;
-GL gl;
-GL gl2;
-int i = 0;
+GLU glu; //OpenGL objects
+GL gl, gl2;
 
-float[] cloud1;
-float[] cloud2;
+float[] cloud1, cloud2;
+int[] cloud1col;
+String cloud1filename;
+String cloud2filename;
+String cloud2abspath;
+
 float[] transCloud = null;
 float[] bigCloud = null;
 PVector[] vectorCloud1;
 PVector[] vectorCloud2;
 ArrayList cloud1PointsList = new ArrayList();//Lists for holding corresponding points?
 ArrayList cloud2PointsList = new ArrayList();
-PVector mouseSomething; //whats this?
 
-float rX,rY,rZ,vX,vY,vZ,vYY;
-float tX,tY,tZ,tvX,tvY,tvZ;
-float pointSize = 5f;
+float pointSize = 5f; // set the point size of the point cloud
 FloatBuffer f1, f2, f3;
 
-void setup(){ 
- size(640, 480, OPENGL);
- laodcloud1button = new Button(200, 50, "Load cloud 1");
- laodcloud2button = new Button(350, 50, "Load cloud 2");
- viewcloud1button = new Button(200, 100, "View cloud 1");
- viewcloud2button = new Button(350, 100, "View cloud 2");
- transformCloudButton = new Button(200, 200, "Merge clouds");
- viewBigCloudButton = new Button(350, 200, "View merged clouds");
+NumberFormat formatter = new DecimalFormat("#0.000"); //Tidying up numbers for file writing
+
+/*
+setup() is called when application is launched
+*/
+void setup(){
+  //set up application screen size and renderer
+  if(screen.width>1300){
+    size(800, 600, OPENGL);
+  }
+  else{
+    size(640, 480, OPENGL);
+  }
+  /*
+  Object instantiators:
+  */
+  laodcloud1button = new Button(width/2-Math.round(textWidth("Load cloud 1"))-50, 50, "Load cloud 1");
+  laodcloud2button = new Button(width/2+30, 50, "Load cloud 2");
+  viewcloud1button = new Button(width/2-Math.round(textWidth("View cloud 1"))-50, 100, "View cloud 1");
+  viewcloud2button = new Button(width/2+30, 100, "View cloud 2");
+  transformCloudButton = new Button(width/2-Math.round(textWidth("Merge clouds")/2), 200, "Merge clouds");
+  viewBigCloudButton = new Button(width/2-Math.round(textWidth("View merge clouds")/2), 250, "View merged clouds");
+  printFileButton = new Button(width/2-Math.round(textWidth("Print merged cloud to file")/2), 300, "Print merged cloud to file");
+  resetRegistrationButton = new Button(width/2-Math.round(textWidth("Reset registration")/2), 400, "Reset registration");
  
-////////PUT THESE IN A FILECHOOSER METHOD
+////////For very accurate merging of test data,
+////////Uncomment the following to start application with :
 // cloud1 = loadPoints("pcKinect_reference.txt");
 // vectorCloud1 = loadVectors("pcKinect_reference.txt");
 // cloud2 = loadPoints("pcKinect_transformed.txt");
 // vectorCloud2 = loadVectors("pcKinect_transformed.txt");
 // f1 = loadFloats(cloud1);
 // f2 = loadFloats(cloud2);
-
-//cloud1PointsList.add(new PVector(172.12, 312.35, 129.05));
-//cloud2PointsList.add(new PVector(280.63, 220.26, -34.754));
-//cloud1PointsList.add(new PVector(52.372, 162.82, -66.771));
-//cloud2PointsList.add(new PVector(54.642, 131.86, -161.87));
-//cloud1PointsList.add(new PVector(-154.84, 339.61, -139.42));
-//cloud2PointsList.add(new PVector(-71.122, 379.58, -209.71));  
-//cloud1PointsList.add(new PVector(179.29, 326.93, -82.203));
-//cloud2PointsList.add(new PVector(226.51, 219.59, -239.6));
-
-
- 
- setupMouseWheel();
-// camera1 = new Camera(this);
-//  camera1 = new Camera(this,0,200,0, 0,-100,100);
+// cloud1PointsList.add(new PVector(172.12, 312.35, 129.05));
+// cloud1PointsList.add(new PVector(52.372, 162.82, -66.771));
+// cloud1PointsList.add(new PVector(-154.84, 339.61, -139.42));
+// cloud2PointsList.add(new PVector(280.63, 220.26, -34.754));
+// cloud2PointsList.add(new PVector(54.642, 131.86, -161.87));
+// cloud2PointsList.add(new PVector(-71.122, 379.58, -209.71));
   
 }
 
+/*
+draw() is called every time the screen is updated, 60 times per second
+*/
 void draw(){
-  //Transformation values, to be updated every time something happens.
-  //Rotation:
-  rX+=vX;
-  rY+=vY;
-  rZ+=vZ;
-  vX*=.02;
-  vY*=.02;
-  vYY*=.02;
-  vZ*=.02;
-  //Translation;
-  tX+=tvX;
-  tY+=tvY;
-  tZ+=tvZ;
-  tvX*=.02;
-  tvY*=.02;
-  tvZ*=.02;
   background(0);
-  mouseControl();  
-  cameraControl();
   switch(currentScreen) {
     case 0: drawOpenScreen(); break;
     case 1: drawCloudOne(); break;
@@ -96,5 +93,6 @@ void draw(){
     case 3: drawBigCloud(); break;
     default: drawOpenScreen(); break;
   }
+  shouldCameraBeOn();
 }
 

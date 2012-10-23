@@ -1,12 +1,5 @@
-
-/**
-Assumptions:
-pointsets are same size
-*/
 PVector meanset1;
 PVector meanset2;
-//PVector[] pntSet1c;
-//PVector[] pntSet2c;
 double[][] pntSet1c;
 double[][] pntSet2c;
 double[][] CCp1p2;
@@ -82,7 +75,6 @@ void getRotationAndTranslation(ArrayList<PVector> pointset1, ArrayList<PVector> 
     }
   }
   
-  //Cross correlation matrix
   CCp1p2 = new double[3][3];
   for(int i=0; i<3; i++){
     for(int j=0; j<3; j++){
@@ -136,7 +128,6 @@ void getRotationAndTranslation(ArrayList<PVector> pointset1, ArrayList<PVector> 
   for(int i=1; i<Q.length; i++){
     for(int j=1;j<Q.length; j++){
       Q[i][j] = CCp1p2[i-1][j-1] + CCp1p2[j-1][i-1];
-//      Q[i][j] = 1.0;
     }
   }
   for(int i=1; i<Q.length; i++){//-trace(CCp1p2)*eye(3)
@@ -253,7 +244,17 @@ void getRotationAndTranslation(ArrayList<PVector> pointset1, ArrayList<PVector> 
   }
   
   res = new double[3];
+  res[0]=Math.sqrt((diff[0][0]*diff[0][0])+(diff[1][0]*diff[1][0])+(diff[2][0]*diff[2][0]));
+  res[1]=Math.sqrt((diff[0][1]*diff[0][1])+(diff[1][1]*diff[1][1])+(diff[2][1]*diff[2][1]));
+  res[2]=Math.sqrt((diff[0][2]*diff[0][2])+(diff[1][2]*diff[1][2])+(diff[2][2]*diff[2][2]));
+  
+  println();
+  println("res:");
+  for(int i=0; i<3; i++){
+    println(res[i]);
+  }
 }
+
 
 /**The transformation: 
 - Takes in cloud array n*3x1, rotation matrix and translation matrix.
